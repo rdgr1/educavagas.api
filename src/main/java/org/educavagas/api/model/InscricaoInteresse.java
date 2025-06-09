@@ -14,7 +14,16 @@ public class InscricaoInteresse {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
+
     @CreationTimestamp
-    @Column(nullable = false,updatable = false)
-    private Instant criadoEm = Instant.now();
+    @Column(nullable = false, updatable = false)
+    private Instant criadoEm;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "responsavel_uuid", nullable = false)
+    private Responsavel responsavel;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "vaga_uuid", nullable = false)
+    private Vaga vaga;
 }

@@ -1,57 +1,52 @@
-package org.educavagas.api.services;
+package org.educavagas.api.service;
 
 import org.educavagas.api.dto.VagaDto;
+import org.educavagas.api.mapper.VagaMapper;
 import org.educavagas.api.model.Vaga;
 import org.educavagas.api.repository.VagaRepository;
-import org.educavagas.api.mapper.VagaMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class VagaService {
-    private final VagaRepository repository;
-    private final VagaMapper mapper;
+    private final VagaRepository repo;
+    private final VagaMapper     mapper;
 
-    public VagaService(VagaRepository repository, VagaMapper mapper) {
-        this.repository = repository;
+    public VagaService(VagaRepository repo, VagaMapper mapper) {
+        this.repo   = repo;
         this.mapper = mapper;
     }
 
-    public VagaDto salvarVaga(VagaDto dto) {
-        Vaga entity = mapper.toEntity(dto);
-        entity = repository.save(entity);
-        return mapper.toDto(entity);
-    }
-
-    public VagaDto alterarVaga(UUID uuid, VagaDto dto) {
-        if (!repository.existsById(uuid)) {
-            throw new IllegalArgumentException("Vaga não encontrada!");
-        }
-        Vaga entity = mapper.toEntity(dto);
-        entity.setUuid(uuid);
-        entity = repository.save(entity);
-        return mapper.toDto(entity);
-    }
-
-    public void deletarVaga(UUID uuid) {
-        Vaga entity = repository.findById(uuid)
-                .orElseThrow(() -> new IllegalArgumentException("Vaga não encontrada!"));
-        repository.delete(entity);
-    }
-
-    public VagaDto buscarVagaPorId(UUID uuid) {
-        Vaga entity = repository.findById(uuid)
-                .orElseThrow(() -> new IllegalArgumentException("Vaga não encontrada!"));
-        return mapper.toDto(entity);
-    }
-
-    public List<VagaDto> listarVagas() {
-        return repository.findAll()
-                .stream()
+    public List<VagaDto> listAll() {
+        return repo.findAll().stream()
                 .map(mapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
+    }
+
+    public VagaDto findById(UUID id) {
+        return repo.findById(id)
+                .map(mapper::toDto)
+                .orElseThrow(() -> new IllegalArgumentException("Vaga não encontrada"));
+    }
+
+    public VagaDto create(VagaDto dto) {
+        Vaga v = mapper.toEntity(dto);
+        v = repo.save(v);
+        return mapper.toDto(v);
+    }
+
+    public VagaDto update(UUID id, VagaDto dto) {
+        if (!repo.existsById(id)) throw new IllegalArgumentException("Vaga não encontrada");
+        Vaga v = mapper.toEntity(dto);
+        v.setUuid(id);
+        v = repo.save(v);
+        return mapper.toDto(v);
+    }
+
+    public void delete(UUID id) {
+        if (!repo.existsById(id)) throw new IllegalArgumentException("Vaga não encontrada");
+        repo.deleteById(id);
     }
 }

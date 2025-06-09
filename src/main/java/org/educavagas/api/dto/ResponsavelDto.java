@@ -1,37 +1,21 @@
 package org.educavagas.api.dto;
-import java.util.List;
-import java.util.UUID;
+
 import jakarta.validation.constraints.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.UUID;
+
 public record ResponsavelDto(
-        @NotNull(message = "UUID de responsável é obrigatório")
-        UUID uuid,
-
-        @NotBlank(message = "Nome completo é obrigatório")
-        @Size(min = 3, max = 100, message = "Nome deve ter entre {min} e {max} caracteres")
-        String nomeCompleto,
-
-        @NotBlank(message = "CPF é obrigatório")
-        @Pattern(regexp = "\\d{11}", message = "CPF deve conter exatamente 11 dígitos numéricos")
-        String cpf,
-
-        @NotBlank(message = "E-mail é obrigatório")
-        @Email(message = "E-mail deve ser válido")
-        String email,
-
-        @NotBlank(message = "Senha é obrigatória")
-        @Size(min = 6, max = 100, message = "Senha deve ter entre {min} e {max} caracteres")
-        String senha,
-
-        @NotEmpty(message = "Pelo menos uma role deve ser atribuída")
-        List<@NotNull(message = "UUID da role não pode ser nulo") UUID> roles,
-
-        @NotBlank(message = "Telefone é obrigatório")
-        @Size(min = 8, max = 20, message = "Telefone deve ter entre {min} e {max} caracteres")
-        String telefone,
-
-        @NotBlank(message = "Endereço é obrigatório")
-        @Size(min = 3, max = 200, message = "Endereço deve ter entre {min} e {max} caracteres")
-        String endereco
-) { }
-
-
+        @NotNull UUID uuid,
+        @NotBlank @Size(min = 3, max = 100) String nomeCompleto,
+        @NotBlank @Pattern(regexp = "\\d{11}") String cpf,
+        @NotBlank @Email String email,
+        @NotBlank @Size(min = 6, max = 100) String senha,
+        @NotNull Instant criadoEm,
+        @NotNull Instant atualizadoEm,
+        LocalDateTime ultimoLogin,
+        @NotEmpty Set<@NotNull UUID> roles,
+        @NotBlank String telefone,
+        @NotBlank String endereco
+) {}

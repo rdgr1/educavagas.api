@@ -15,12 +15,25 @@ public class Vaga {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
-    private Integer capacidade;
-    private Integer matriculados;
-    private Turno turno;
-    @CreationTimestamp
-    @Column(nullable = false,updatable = false)
-    Instant criadaEM = Instant.now();
+
     @Column(nullable = false)
-    Instant atualizadaEM = Instant.now();
+    private Integer capacidade;
+
+    @Column(nullable = false)
+    private Integer matriculados;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Turno turno;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "turma_uuid", nullable = false)
+    private Turma turma;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private Instant criadaEM;
+
+    @Column(nullable = false)
+    private Instant atualizadaEM;
 }

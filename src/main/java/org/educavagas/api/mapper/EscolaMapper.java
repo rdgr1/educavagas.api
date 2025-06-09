@@ -6,6 +6,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface EscolaMapper {
+    EscolaDto toDto(Escola entidade);
     Escola toEntity(EscolaDto dto);
-    EscolaDto toDto(Escola escola);
 }

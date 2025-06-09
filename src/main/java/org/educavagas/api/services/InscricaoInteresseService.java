@@ -1,57 +1,73 @@
 package org.educavagas.api.services;
 
 import org.educavagas.api.dto.InscricaoInteresseDto;
-import org.educavagas.api.model.InscricaoInteresse;
-import org.educavagas.api.repository.InscricaoInteresseRepository;
 import org.educavagas.api.mapper.InscricaoInteresseMapper;
+import org.educavagas.api.model.InscricaoInteresse;
+import org.educavagas.api.model.Responsavel;
+import org.educavagas.api.model.Vaga;
+import org.educavagas.api.repository.InscricaoInteresseRepository;
+import org.educavagas.api.repository.ResponsavelRepository;
+import org.educavagas.api.repository.VagaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class InscricaoInteresseService {
-    private final InscricaoInteresseRepository repository;
-    private final InscricaoInteresseMapper mapper;
+    private final InscricaoInteresseRepository repo;
+    private final ResponsavelRepository       respRepo;
+    private final VagaRepository              vagaRepo;
+    private final InscricaoInteresseMapper    mapper;
 
-    public InscricaoInteresseService(InscricaoInteresseRepository repository, InscricaoInteresseMapper mapper) {
-        this.repository = repository;
-        this.mapper = mapper;
+    public InscricaoInteresseService(
+            InscricaoInteresseRepository repo,
+            ResponsavelRepository respRepo,
+            VagaRepository vagaRepo,
+            InscricaoInteresseMapper mapper
+    ) {
+        this.repo    = repo;
+        this.respRepo = respRepo;
+        this.vagaRepo = vagaRepo;
+        this.mapper  = mapper;
     }
 
-    public InscricaoInteresseDto salvarInscricao(InscricaoInteresseDto dto) {
-        InscricaoInteresse entity = mapper.toEntity(dto);
-        entity = repository.save(entity);
-        return mapper.toDto(entity);
-    }
-
-    public InscricaoInteresseDto alterarInscricao(UUID uuid, InscricaoInteresseDto dto) {
-        if (!repository.existsById(uuid)) {
-            throw new IllegalArgumentException("Inscrição não encontrada!");
-        }
-        InscricaoInteresse entity = mapper.toEntity(dto);
-        entity.setUuid(uuid);
-        entity = repository.save(entity);
-        return mapper.toDto(entity);
-    }
-
-    public void deletarInscricao(UUID uuid) {
-        InscricaoInteresse entity = repository.findById(uuid)
-                .orElseThrow(() -> new IllegalArgumentException("Inscrição não encontrada!"));
-        repository.delete(entity);
-    }
-
-    public InscricaoInteresseDto buscarInscricaoPorId(UUID uuid) {
-        InscricaoInteresse entity = repository.findById(uuid)
-                .orElseThrow(() -> new IllegalArgumentException("Inscrição não encontrada!"));
-        return mapper.toDto(entity);
-    }
-
-    public List<InscricaoInteresseDto> listarInscricoes() {
-        return repository.findAll()
+    public List<InscricaoInteresseDto> listAll() {
+        return repo.findAll()
                 .stream()
                 .map(mapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
+    }
+
+    public InscricaoInteresseDto findById(UUID id) {
+        return repo.findById(id)
+                .map(mapper::toDto)
+                .orElseThrow(() -> new IllegalArgumentException("Inscrição não encontrada"));
+    }
+
+    public InscricaoInteresseDto create(InscricaoInteresseDto dto) {
+        // carrega as entidades relacionadas
+        Responsavel r = respRepo.findById(dto.responsavelUuid())
+                .orElseThrow(() -> new IllegalArgumentException("Responsável não encontrado"));
+        Vaga v = vagaRepo.findById(dto.vagaUuid())
+                .orElseThrow(() -> new IllegalArgumentException("Vaga não encontrada"));
+
+        // mapeia DTO → Entity
+        InscricaoInteresse ent = mapper.toEntity(dto);
+        ent.setResponsavel(r);
+        ent.setVaga(v);
+
+        // persiste
+        ent = repo.save(ent);
+
+        // retorna Entity → DTO
+        return mapper.toDto(ent);
+    }
+
+    public void delete(UUID id) {
+        if (!repo.existsById(id)) {
+            throw new IllegalArgumentException("Inscrição não encontrada");
+        }
+        repo.deleteById(id);
     }
 }

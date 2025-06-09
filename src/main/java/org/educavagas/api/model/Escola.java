@@ -12,6 +12,10 @@ public class Escola {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
+
+    @Column(nullable = false, length = 100)
     private String nome;
+
+    @Column(nullable = false, length = 200)
     private String localizacao;
 }

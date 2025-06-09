@@ -5,12 +5,18 @@ import lombok.Data;
 
 import java.util.UUID;
 
-@Data
 @Entity
 @Table(name = "turma")
+@Data
 public class Turma {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
+
+    @Column(nullable = false, length = 50)
     private String nome;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "serie_uuid", nullable = false)
+    private Serie serie;
 }

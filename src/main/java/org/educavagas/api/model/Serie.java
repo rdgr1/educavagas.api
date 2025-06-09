@@ -4,12 +4,15 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.UUID;
-@Data
+
 @Entity
 @Table(name = "serie")
+@Data
 public class Serie {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
+
+    @Column(nullable = false, length = 50)
     private String nome;
 }
