@@ -1,5 +1,6 @@
 package org.educavagas.api.services;
 
+import org.educavagas.api.dto.RegisterEscolaRequest;
 import org.educavagas.api.dto.UsuarioEscolaDto;
 import org.educavagas.api.model.UsuarioEscola;
 import org.educavagas.api.repository.UsuarioEscolaRepository;
@@ -20,13 +21,13 @@ public class UsuarioEscolaService {
         this.mapper = mapper;
     }
 
-    public UsuarioEscolaDto salvarUsuarioEscola(UsuarioEscolaDto dto) {
+    public UsuarioEscolaDto salvarUsuarioEscola(RegisterEscolaRequest dto) {
         UsuarioEscola entity = mapper.toEntity(dto);
         entity = repository.save(entity);
         return mapper.toDto(entity);
     }
 
-    public UsuarioEscolaDto alterarUsuarioEscola(UUID uuid, UsuarioEscolaDto dto) {
+    public UsuarioEscolaDto alterarUsuarioEscola(UUID uuid, RegisterEscolaRequest dto) {
         if (!repository.existsById(uuid)) {
             throw new IllegalArgumentException("UsuárioEscola não encontrado!");
         }

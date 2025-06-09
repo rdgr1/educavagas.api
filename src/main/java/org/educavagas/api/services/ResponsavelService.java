@@ -1,5 +1,6 @@
 package org.educavagas.api.services;
 
+import org.educavagas.api.dto.RegisterResponsavelRequest;
 import org.educavagas.api.dto.ResponsavelDto;
 import org.educavagas.api.model.Responsavel;
 import org.educavagas.api.repository.ResponsavelRepository;
@@ -20,13 +21,13 @@ public class ResponsavelService {
         this.mapper = mapper;
     }
 
-    public ResponsavelDto salvarResponsavel(ResponsavelDto dto) {
+    public ResponsavelDto salvarResponsavel(RegisterResponsavelRequest dto) {
         Responsavel entity = mapper.toEntity(dto);
         entity = repository.save(entity);
         return mapper.toDto(entity);
     }
 
-    public ResponsavelDto alterarResponsavel(UUID uuid, ResponsavelDto dto) {
+    public ResponsavelDto alterarResponsavel(UUID uuid, RegisterResponsavelRequest dto) {
         if (!repository.existsById(uuid)) {
             throw new IllegalArgumentException("Responsável não encontrado!");
         }

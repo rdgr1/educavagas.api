@@ -1,9 +1,13 @@
 package org.educavagas.api.services;
 
+import jakarta.validation.Valid;
+import org.educavagas.api.dto.RegisterEscolaRequest;
+import org.educavagas.api.dto.RegisterResponsavelRequest;
 import org.educavagas.api.dto.ResponsavelDto;
 import org.educavagas.api.dto.UsuarioEscolaDto;
 import org.educavagas.api.mapper.ResponsavelMapper;
 import org.educavagas.api.mapper.UsuarioEscolaMapper;
+import org.educavagas.api.model.Escola;
 import org.educavagas.api.repository.EscolaRepository;
 import org.educavagas.api.repository.ResponsavelRepository;
 import org.educavagas.api.repository.UsuarioEscolaRepository;
@@ -14,13 +18,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class RegistrationService {
 
-    private final UsuarioRepository       usuarioRepo;
-    private final ResponsavelRepository   responsavelRepo;
-    private final UsuarioEscolaRepository usuarioEscolaRepo;
-    private final EscolaRepository escolaRepo;
-    private final ResponsavelMapper       responsavelMapper;
-    private final UsuarioEscolaMapper     usuarioEscolaMapper;
-    private final PasswordEncoder         passwordEncoder;
+    private final UsuarioRepository        usuarioRepo;
+    private final ResponsavelRepository    responsavelRepo;
+    private final UsuarioEscolaRepository  usuarioEscolaRepo;
+    private final EscolaRepository         escolaRepo;
+    private final ResponsavelMapper        responsavelMapper;
+    private final UsuarioEscolaMapper      usuarioEscolaMapper;
+    private final PasswordEncoder          passwordEncoder;
 
     public RegistrationService(
             UsuarioRepository usuarioRepo,
@@ -31,16 +35,16 @@ public class RegistrationService {
             UsuarioEscolaMapper usuarioEscolaMapper,
             PasswordEncoder passwordEncoder
     ) {
-        this.usuarioRepo          = usuarioRepo;
-        this.responsavelRepo      = responsavelRepo;
-        this.usuarioEscolaRepo    = usuarioEscolaRepo;
-        this.escolaRepo           = escolaRepo;
-        this.responsavelMapper    = responsavelMapper;
-        this.usuarioEscolaMapper  = usuarioEscolaMapper;
-        this.passwordEncoder      = passwordEncoder;
+        this.usuarioRepo         = usuarioRepo;
+        this.responsavelRepo     = responsavelRepo;
+        this.usuarioEscolaRepo   = usuarioEscolaRepo;
+        this.escolaRepo          = escolaRepo;
+        this.responsavelMapper   = responsavelMapper;
+        this.usuarioEscolaMapper = usuarioEscolaMapper;
+        this.passwordEncoder     = passwordEncoder;
     }
 
-    public ResponsavelDto registerResponsavel(ResponsavelDto dto) {
+    public ResponsavelDto registerResponsavel(@Valid RegisterResponsavelRequest dto) {
         if (usuarioRepo.existsByCpf(dto.cpf()))
             throw new IllegalArgumentException("CPF já cadastrado");
         if (usuarioRepo.existsByEmail(dto.email()))
@@ -53,7 +57,7 @@ public class RegistrationService {
         return responsavelMapper.toDto(entidade);
     }
 
-    public UsuarioEscolaDto registerEscola(UsuarioEscolaDto dto) {
+    public UsuarioEscolaDto registerEscola(@Valid RegisterEscolaRequest dto) {
         if (usuarioRepo.existsByCpf(dto.cpf()))
             throw new IllegalArgumentException("CPF já cadastrado");
         if (usuarioRepo.existsByEmail(dto.email()))
@@ -63,7 +67,7 @@ public class RegistrationService {
         entidade.setSenha(passwordEncoder.encode(dto.senha()));
         entidade.setAtivo(false);
 
-        var escola = escolaRepo.findById(dto.escolaUuid())
+        Escola escola = escolaRepo.findById(dto.escolaUuid())
                 .orElseThrow(() -> new IllegalArgumentException("Escola não encontrada"));
         entidade.setEscola(escola);
 
