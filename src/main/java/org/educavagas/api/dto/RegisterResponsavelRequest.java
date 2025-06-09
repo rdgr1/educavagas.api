@@ -7,6 +7,6 @@ public record RegisterResponsavelRequest(
         @NotBlank @Pattern(regexp = "\\d{11}") String cpf,
         @NotBlank @Email String email,
         @NotBlank @Size(min = 6) String senha,
-        @NotBlank @Size(min = 8, max = 20) String telefone,
-        @NotBlank @Size(min = 3, max = 200) String endereco
+         @Size(min = 8, max = 20) String telefone,
+         @Size(min = 3, max = 200) String endereco
 ) {}

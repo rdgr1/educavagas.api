@@ -1,4 +1,3 @@
-// src/main/java/org/educavagas/api/controller/AutenticacaoController.java
 package org.educavagas.api.controller;
 
 import org.educavagas.api.dto.*;
